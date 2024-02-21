@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Diagram: Users, Comments, Posts, Likes</title>
+    <style>
+        /* Add your CSS styles here */
+        .class {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .association {
+            background-color: #f0f0f0;
+            border: 1px dashed #999;
+            padding: 5px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="class">
+    <h2>Users</h2>
+    <ul>
+        <li>id: Long</li>
+        <li>username: String</li>
+        <li>email: String</li>
+        <!-- Add more attributes as needed -->
+    </ul>
+</div>
+<div class="class">
+    <h2>Posts</h2>
+    <ul>
+        <li>id: Long</li>
+        <li>user_id: Long</li>
+        <li>title: String</li>
+        <li>content: String</li>
+        <!-- Add more attributes as needed -->
+    </ul>
+</div>
+<div class="class">
+    <h2>Comments</h2>
+    <ul>
+        <li>id: Long</li>
+        <li>user_id: Long</li>
+        <li>post_id: Long</li>
+        <li>text: String</li>
+        <!-- Add more attributes as needed -->
+    </ul>
+</div>
+<div class="class">
+    <h2>Likes</h2>
+    <ul>
+        <li>id: Long</li>
+        <li>user_id: Long</li>
+        <li>post_id: Long</li>
+        <!-- Add more attributes as needed -->
+    </ul>
+</div>
+<div class="association">
+    <h3>User - Post (One-to-Many)</h3>
+    <p>User has many Posts</p>
+</div>
+<div class="association">
+    <h3>User - Comment (One-to-Many)</h3>
+    <p>User has many Comments</p>
+</div>
+<div class="association">
+    <h3>Post - Comment (One-to-Many)</h3>
+    <p>Post has many Comments</p>
+</div>
+<div class="association">
+    <h3>User - Like (One-to-Many)</h3>
+    <p>User has many Likes</p>
+</div>
+<div class="association">
+    <h3>Post - Like (One-to-Many)</h3>
+    <p>Post has many Likes</p>
+</div>
+</body>
+</html>
