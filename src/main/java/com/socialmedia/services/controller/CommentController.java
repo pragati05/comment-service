@@ -3,6 +3,9 @@ package com.socialmedia.services.controller;
 import com.socialmedia.services.entity.Comment;
 import com.socialmedia.services.entity.Like;
 import com.socialmedia.services.entity.User;
+import com.socialmedia.services.mapper.CommentMapper;
+import com.socialmedia.services.models.CommentRequestForReply;
+import com.socialmedia.services.models.CommentResponse;
 import com.socialmedia.services.service.CommentService;
 import com.socialmedia.services.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.socialmedia.services.service.LikeService;
+
+import static net.sf.jsqlparser.parser.feature.Feature.comment;
 
 
 @RestController
@@ -28,10 +33,12 @@ public class CommentController {
     @Autowired
     private UserService userService;
 
+    CommentMapper commentMapper = CommentMapper.INSTANCE;
+
 
     @GetMapping("/{commentId}")
-    public Comment getComment(@PathVariable Long commentId) {
-        return commentService.getCommentById(commentId);
+    public CommentResponse getComment(@PathVariable Long commentId) {
+        return commentMapper.commentToCommentResponse(commentService.getCommentById(commentId));
     }
 
     @PutMapping("/{commentId}/like")
@@ -86,19 +93,20 @@ public class CommentController {
 
 
     @PostMapping("/{parentCommentId}/reply")
-    public ResponseEntity<?> replyToComment(@PathVariable Long parentCommentId, @RequestBody Comment reply) {
-        Comment comment = commentService.getCommentById(parentCommentId);
+    public ResponseEntity<?> replyToComment(@PathVariable Long parentCommentId, @RequestBody CommentRequestForReply replyRequest) {
+        Comment reply = commentMapper.commentRequestForReplyToComment(replyRequest);
+        Comment parentComment = commentService.getCommentById(parentCommentId);
 
-        if(comment.getDepth() > replyDepth){
+        if(parentComment.getDepth() == replyDepth){
             return ResponseEntity.badRequest().body("Reply depth cannot be more than " + replyDepth);
         }
 
-        reply.setParentComment(comment);
-        reply.setDepth(comment.getDepth() + 1);
+        reply.setParentComment(parentComment);
+        reply.setDepth(parentComment.getDepth() + 1);
 
-        commentService.addOrUpdateComment(comment);
+        commentService.addOrUpdateComment(reply);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(reply);
+        return ResponseEntity.status(HttpStatus.CREATED).body(commentMapper.commentToCommentResponse(reply));
     }
 
 
