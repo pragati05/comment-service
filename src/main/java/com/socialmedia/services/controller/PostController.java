@@ -1,9 +1,13 @@
 package com.socialmedia.services.controller;
 
 import com.socialmedia.services.entity.Comment;
+import com.socialmedia.services.mapper.PostMapper;
+import com.socialmedia.services.models.PostRequest;
+import com.socialmedia.services.models.PostResponse;
 import com.socialmedia.services.service.PostService;
 import com.socialmedia.services.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.socialmedia.services.entity.Post;
 
@@ -19,19 +23,28 @@ public class PostController {
     @Autowired
     private CommentService commentService;
 
+    PostMapper postMapper = PostMapper.INSTANCE;
+
     @PostMapping
-    public Post addPost(@RequestBody Post post) {
-        return postService.addPost(post);
+    public PostResponse addPost(@RequestBody PostRequest postRequest) {
+        Post post = postMapper.postRequestToPost(postRequest);
+        postService.addPost(post);
+        return postMapper.postToPostResponse(post);
     }
 
     @GetMapping
-    public List<Post> getPosts() {
-        return postService.getPosts();
+    public List<PostResponse> getPosts() {
+        List<Post> posts = postService.getPosts();
+        return postMapper.postToPostResponses(posts);
     }
 
     @GetMapping("/{postId}")
-    public Post getPost(@PathVariable Long postId) {
-        return postService.getPostById(postId);
+    public ResponseEntity<PostResponse> getPost(@PathVariable Long postId) {
+        Post post = postService.getPostById(postId);
+        if (post != null)
+            return ResponseEntity.ok(postMapper.postToPostResponse(post));
+        else
+            return ResponseEntity.notFound().build();
     }
 
     // Create a new comment for a post
