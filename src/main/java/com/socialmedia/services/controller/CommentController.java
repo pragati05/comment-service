@@ -42,13 +42,13 @@ public class CommentController {
     }
 
     @PutMapping("/{commentId}/like")
-    public Comment likeComment(@PathVariable Long commentId, @RequestParam Long userId) {
-        return likeHelper(commentId, userId, false);
+    public CommentResponse likeComment(@PathVariable Long commentId, @RequestParam Long userId) {
+        return commentMapper.commentToCommentResponse(likeHelper(commentId, userId, false));
     }
 
     @PutMapping("/{commentId}/dislike")
-    public Comment dislikeComment(@PathVariable Long commentId, @RequestParam Long userId) {
-        return likeHelper(commentId, userId, true);
+    public CommentResponse dislikeComment(@PathVariable Long commentId, @RequestParam Long userId) {
+        return commentMapper.commentToCommentResponse(likeHelper(commentId, userId, true));
     }
 
     public Comment likeHelper(Long commentId, Long userId, boolean dislike) {
